@@ -1,8 +1,10 @@
 {
   "dependencies": {
     "celsius": "^1.0.2",
-    "express": "^4.19.2",
-    "fast-csv": "^5.0.1",
-    "prom-client": "^15.1.2"
+    "express": "^4.19.2"
+  },
+  "scripts": {
+    "docker:build": "docker build -t schreglmann1/wetter_to_prom:latest .",
+    "docker:publish": "docker push schreglmann1/wetter_to_prom:latest"
   }
 }
