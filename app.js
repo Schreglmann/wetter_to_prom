@@ -4,7 +4,7 @@ const { toCelsius } = require('celsius');
 
 app.use(express.raw({ type: '*/*', limit: '10mb' }));
 
-const port = 3001;
+const port = 80;
 let responseJson = {};
 
 app.post('/write', (req, res) => {
