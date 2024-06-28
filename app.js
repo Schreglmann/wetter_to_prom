@@ -21,13 +21,13 @@ app.post('/write', (req, res) => {
     }, {});
     responseJson.tempinf = toCelsius(responseJson.tempinf, 2);
     responseJson.tempf = toCelsius(responseJson.tempf, 2);
-    responseJson.eventrainin = convert(responseJson.eventrainin).from('in').to('mm');
-    responseJson.hourlyrainin = convert(responseJson.hourlyrainin).from('in').to('mm');
-    responseJson.dailyrainin = convert(responseJson.dailyrainin).from('in').to('mm');
-    responseJson.weeklyrainin = convert(responseJson.weeklyrainin).from('in').to('mm');
-    responseJson.monthlyrainin = convert(responseJson.monthlyrainin).from('in').to('mm');
-    responseJson.yearlyrainin = convert(responseJson.yearlyrainin).from('in').to('mm');
-    responseJson.totalrainin = convert(responseJson.totalrainin).from('in').to('mm');
+    responseJson.eventrainin = convert(Number(responseJson.eventrainin), 'in', 'mm');
+    responseJson.hourlyrainin = convert(Number(responseJson.hourlyrainin), 'in', 'mm');
+    responseJson.dailyrainin = convert(Number(responseJson.dailyrainin), 'in', 'mm');
+    responseJson.weeklyrainin = convert(Number(responseJson.weeklyrainin), 'in', 'mm');
+    responseJson.monthlyrainin = convert(Number(responseJson.monthlyrainin), 'in', 'mm');
+    responseJson.yearlyrainin = convert(Number(responseJson.yearlyrainin), 'in', 'mm');
+    responseJson.totalrainin = convert(Number(responseJson.totalrainin), 'in', 'mm');
 });
 
 app.get('/read', (req, res) => {
@@ -35,7 +35,7 @@ app.get('/read', (req, res) => {
 });
 
 app.get('/temp', (req, res) => {
-    res.status(200).send(responseJson.tempf);
+    res.status(200).send(responseJson.tempf.toString());
 });
 
 // Expose the metrics at the /metrics endpoint
