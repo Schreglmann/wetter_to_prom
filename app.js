@@ -19,6 +19,7 @@ app.post('/write', (req, res) => {
         acc[key] = value;
         return acc;
     }, {});
+    responseJson.tempfa = responseJson.tempf;
     responseJson.tempinf = toCelsius(responseJson.tempinf, 2);
     responseJson.tempf = toCelsius(responseJson.tempf, 2);
     responseJson.eventrainin = convert(Number(responseJson.eventrainin), 'in', 'mm');
@@ -35,7 +36,7 @@ app.get('/read', (req, res) => {
 });
 
 app.get('/temp', (req, res) => {
-    res.status(200).send(responseJson.tempf.toString());
+    res.status(200).send(responseJson.tempfa);
 });
 
 // Expose the metrics at the /metrics endpoint
