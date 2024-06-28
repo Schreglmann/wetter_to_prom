@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const { toCelsius } = require('celsius');
+const convert = require('convert-length');
 
 app.use(express.raw({ type: '*/*', limit: '10mb' }));
 
@@ -20,10 +21,21 @@ app.post('/write', (req, res) => {
     }, {});
     responseJson.tempinf = toCelsius(responseJson.tempinf, 2);
     responseJson.tempf = toCelsius(responseJson.tempf, 2);
+    responseJson.eventrainin = convert(responseJson.eventrainin).from('in').to('mm');
+    responseJson.hourlyrainin = convert(responseJson.hourlyrainin).from('in').to('mm');
+    responseJson.dailyrainin = convert(responseJson.dailyrainin).from('in').to('mm');
+    responseJson.weeklyrainin = convert(responseJson.weeklyrainin).from('in').to('mm');
+    responseJson.monthlyrainin = convert(responseJson.monthlyrainin).from('in').to('mm');
+    responseJson.yearlyrainin = convert(responseJson.yearlyrainin).from('in').to('mm');
+    responseJson.totalrainin = convert(responseJson.totalrainin).from('in').to('mm');
 });
 
 app.get('/read', (req, res) => {
     res.status(200).send(responseJson);
+});
+
+app.get('/temp', (req, res) => {
+    res.status(200).send(responseJson.tempf);
 });
 
 // Expose the metrics at the /metrics endpoint
