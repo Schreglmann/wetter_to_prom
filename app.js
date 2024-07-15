@@ -8,6 +8,13 @@ app.use(express.raw({ type: '*/*', limit: '10mb' }));
 const port = 80;
 let responseJson = {};
 
+const isRoomLedActive = {
+    "Gang": true,
+    "Wohnzimmer": true,
+    "Badezimmer": false,
+    "Schlafzimmer": true,
+}
+
 app.post('/write', (req, res) => {
     const rawBody = req.body;
     const responseBody = rawBody.toString('utf-8');
@@ -36,6 +43,61 @@ app.get('/read', (req, res) => {
 
 app.get('/temp', (req, res) => {
     res.status(200).send(responseJson.tempf.toString());
+});
+
+app.get('/activateRoomLed', (req, res) => {
+    console.log("activateRoomLed called for room " + req.query.room);
+    const room = req.query.room;
+    if (!room) {
+        res.status(400).send("Room parameter is missing");
+        return;
+    }
+    isRoomLedActive[room] = "true";
+    res.status(200).send("Room LED activated for " + room);
+});
+
+app.get('/activateRoomsLed', (req, res) => {
+    console.log("activateRoomsLed called");
+    isRoomLedActive.forEach((room) => {
+        isRoomLedActive[room] = "true";
+    });
+    res.status(200).send("All Room LEDs activated");
+});
+
+app.get('/deactivateRoomsLed', (req, res) => {
+    console.log("deactivateRoomsLed called");
+    for (let room in isRoomLedActive) {
+        console.log(room);
+        isRoomLedActive[room] = "false";
+    };
+    res.status(200).send("All Room LEDs deactivated");
+});
+
+app.get('/deactivateRoomLed', (req, res) => {
+    console.log("deactivateRoomLed called");
+    console.log(req.query);
+    const room = req.query.room;
+    if (!room) {
+        res.status(400).send("Room parameter is missing");
+        return;
+    }
+    isRoomLedActive[room] = "false";
+    res.status(200).send("Room LED deactivated for " + room);
+});
+
+app.get('/isLedActive', (req, res) => {
+    console.log("isLedActive called for room " + req.query.room);
+    const room = req.query.room;
+    if (!room) {
+        res.status(400).send("Room parameter is missing");
+        return;
+    }
+    if (isRoomLedActive[room] === undefined) {
+        res.status(400).send("Room not found");
+        return;
+    }
+    console.log("LED is " + isRoomLedActive[room]);
+    res.status(200).send(isRoomLedActive[room].toString());
 });
 
 // Expose the metrics at the /metrics endpoint

@@ -61,11 +61,11 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  float temperature = bme.readTemperature();
+  float innerTemperature = bme.readTemperature();
   float humidity = bme.readHumidity();
   float pressure = bme.readPressure();
   Serial.print("Temperature = ");
-  Serial.print(temperature);
+  Serial.print(innerTemperature);
   Serial.println(" *C");
 
   HTTPClient http;
@@ -73,32 +73,55 @@ void loop() {
   http.begin(serverPath.c_str());
   int httpResponseCode = http.GET();
 
-  String payload = "0";
+  String outerTemperature = "0";
   if (httpResponseCode > 0) {
     Serial.print("HTTP Response code: ");
     Serial.println(httpResponseCode);
-    payload = http.getString();
-    Serial.println(payload);
+    outerTemperature = http.getString();
+    Serial.println(outerTemperature);
+  } else {
+    Serial.print("Error code: ");
+    Serial.println(httpResponseCode);
+  }
+  http.end();
+
+  serverPath = "http://192.168.1.171:80/isLedActive?room=" + room;
+  http.begin(serverPath.c_str());
+  httpResponseCode = http.GET();
+
+  String ledIsActive = "true";
+  if (httpResponseCode > 0) {
+    Serial.print("HTTP Response code: ");
+    Serial.println(httpResponseCode);
+    ledIsActive = http.getString();
+    Serial.println(ledIsActive);
   } else {
     Serial.print("Error code: ");
     Serial.println(httpResponseCode);
   }
   http.end();
   
-  if (payload.toFloat() + 1 > temperature) {
-    Serial.println("No Lüfting");
-    digitalWrite(14, LOW);
-    digitalWrite(15, HIGH);
-    digitalWrite(16, HIGH);
-  } else if (payload.toFloat() - 1 < temperature) {
-    Serial.println("Lüfting");
-    digitalWrite(14, HIGH);
-    digitalWrite(15, LOW);
-    digitalWrite(16, HIGH);
+  if (ledIsActive == "true") {
+    if (outerTemperature.toFloat() > innerTemperature + 1) {
+      Serial.println("No Lüfting");
+      digitalWrite(14, LOW);
+      digitalWrite(15, HIGH);
+      digitalWrite(16, HIGH);
+    } else if (outerTemperature.toFloat() < innerTemperature -1) {
+      Serial.println("Lüfting");
+      digitalWrite(14, HIGH);
+      digitalWrite(15, LOW);
+      digitalWrite(16, HIGH);
+    } else {
+      Serial.println("Maybe Lüfting");
+      digitalWrite(14, LOW);
+      digitalWrite(15, LOW);
+      digitalWrite(16, HIGH);
+    }
   } else {
-    Serial.println("Maybe Lüfting");
-    digitalWrite(14, LOW);
-    digitalWrite(15, LOW);
+    Serial.println("LED is not active");
+    digitalWrite(14, HIGH);
+    digitalWrite(15, HIGH);
     digitalWrite(16, HIGH);
   }
 
