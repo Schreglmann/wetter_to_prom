@@ -11,7 +11,7 @@ let responseJson = {};
 const isRoomLedActive = {
     "Gang": true,
     "Wohnzimmer": true,
-    "Badezimmer": false,
+    "Badezimmer": true,
     "Schlafzimmer": true,
 }
 
@@ -58,9 +58,10 @@ app.get('/activateRoomLed', (req, res) => {
 
 app.get('/activateRoomsLed', (req, res) => {
     console.log("activateRoomsLed called");
-    isRoomLedActive.forEach((room) => {
+    for (let room in isRoomLedActive) {
+        console.log(room);
         isRoomLedActive[room] = "true";
-    });
+    };
     res.status(200).send("All Room LEDs activated");
 });
 

@@ -9,7 +9,7 @@
 Adafruit_BME280 bme;  // I2C
 const char* ssid = "";
 const char* password = "";
-const char* room = "Arbeitszimmer";
+String room = "Arbeitszimmer";
 AsyncWebServer server(80);
 void setup() {
   Serial.begin(9600);
@@ -85,7 +85,7 @@ void loop() {
   }
   http.end();
 
-  serverPath = "http://192.168.1.171:80/isLedActive?room=" + room;
+  serverPath = "http://192.168.1.13:3030/isLedActive?room=" + room;
   http.begin(serverPath.c_str());
   httpResponseCode = http.GET();
 
